@@ -1,40 +1,15 @@
 <script lang="ts">
-		import Slide from '$lib/Slide.svelte';
-		import Code from '$lib/Code.svelte';
-		import ObscureImpl from './ObscureImpl.svelte';
+		import Title from './Title.svelte';
+		import Who from './Who.svelte';
+		import PatternMatchingWhat from './PatternMatchingWhat.svelte';
+		import Disclaimer from './Disclaimer.svelte';
+		import PatternMatchingJava from './PatternMatchingJava.svelte';
+		import PatternMatchingExampleGreeter from './PatternMatchingExampleGreeter.svelte';
 </script>
 
-<ObscureImpl />
-
-<Slide transitionStyle="zoom" transitionSpeed="fast">
-	<h3>Coucou</h3>
-	{`$$ J(\\theta_0,\\theta_1) = \\sum_{i=0} $$`}
-</Slide>
-
-<Slide autoAnimate="{true}">
-	<h2 data-id="example-title">Du code!</h2>
-	<Code language="javascript" id="example">
-				<script type="text/template">
-					const name = 'hello world';
-					if (name === 'hello') {
-						console.log('world');
-					}
-				</script>
-			</Code>
-</Slide>
-
-<Slide autoAnimate="{true}">
-	<h2 data-id="example-title">Plus de code!</h2>
-	<Code language="javascript" id="example">
-				<script type="text/template">
-					const name = 'hello world';
-					if (name === 'hello') {
-						console.log('world');
-						console.log('I am alive!');
-					}
-				</script>
-			</Code>
-</Slide>
-
-
-
+<Title />
+<Disclaimer />
+<Who />
+<PatternMatchingWhat />
+<PatternMatchingJava />
+<PatternMatchingExampleGreeter />
