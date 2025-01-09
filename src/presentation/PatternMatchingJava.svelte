@@ -182,7 +182,7 @@ switch (event) {
 
 </style>
 
-{#snippet JEPSnippet(jep: JavaJEP, isPreview: Boolean = false)}
+{#snippet JEPSnippet(jep: JavaJEP, isPreview: boolean = false)}
 	<span>
 		{#if isPreview}<em>Preview</em>{/if} Java {jep.targetVersion}
 		<a href="https://openjdk.org/jeps/{jep.JEPNumber}" target="_blank">JEP {jep.JEPNumber}</a>
