@@ -8,6 +8,7 @@
 		language?: string;
 		noescape?: boolean | null;
 		id?: string | null;
+		width?: string | null
 		children: Snippet;
 	}
 
@@ -18,6 +19,7 @@
 		noescape = true,
 		lineNumbers = true,
 		id = null,
+		width = "fit-content",
 		children
 	}: Props = $props();
 
@@ -28,7 +30,6 @@
         position: relative;
 
         pre {
-            width: fit-content;
             min-width: 50%;
             max-width: 90%;
 
@@ -61,7 +62,7 @@
 
 {#if children}
 	<div class="code-block">
-		<pre class="language-{language}" data-id="{id}">
+		<pre class="language-{language}" data-id="{id}" style="width:{width}">
 		<code data-noescape={noescape} data-trim={trim} data-line-numbers={lineNumbers}
 					data-ln-start-from={lineNumbersFrom}>
 			{@render children()}
