@@ -1,6 +1,6 @@
 <script lang="ts">
 	import 'reveal.js/dist/reveal.css';
-	import 'reveal.js/dist/theme/white.css';
+	import '$lib/op.css';
 	import '@catppuccin/highlightjs/css/catppuccin-latte.css';
 
 	import Reveal, { type Options } from 'reveal.js';
@@ -12,7 +12,7 @@
 	import { checkSlideDimensions } from '$lib/core';
 
 	export let reveal: Options = {
-		slideNumber: true,
+		slideNumber: false,
 		showSlideNumber: 'all',
 		controls: false,
 		transition: 'none',

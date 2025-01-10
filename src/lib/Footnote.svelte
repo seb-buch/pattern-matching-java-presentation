@@ -10,8 +10,8 @@
     div {
         font-size: 0.5em;
         position: absolute;
-        bottom: 0;
-        right: 0;
+        bottom: 1px;
+        right: 1px;
     }
 </style>
 

@@ -5,6 +5,8 @@
 		import Disclaimer from './Disclaimer.svelte';
 		import PatternMatchingJava from './PatternMatchingJava.svelte';
 		import PatternMatchingExampleGreeter from './PatternMatchingExampleGreeter.svelte';
+		import Conclusion from './Conclusion.svelte';
+		import Thanks from './Thanks.svelte';
 </script>
 
 <Title />
@@ -13,3 +15,5 @@
 <PatternMatchingWhat />
 <PatternMatchingJava />
 <PatternMatchingExampleGreeter />
+<Conclusion />
+<Thanks />

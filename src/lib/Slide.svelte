@@ -8,6 +8,8 @@
 		autoAnimate?: boolean | null;
 		autoAnimateID?: string | null;
 		autoAnimateRestart?: boolean | null;
+		backgroundImage?: string | null;
+		backgroundSize?: 'cover' | null;
 		children: Snippet;
 	}
 
@@ -17,7 +19,9 @@
 		children,
 		autoAnimate = null,
 		autoAnimateRestart = null,
-		autoAnimateID = null
+		autoAnimateID = null,
+		backgroundImage = null,
+		backgroundSize = 'cover'
 	}: Props = $props();
 
 </script>
@@ -27,6 +31,7 @@
     }
 </style>
 <section data-transition="{transitionStyle}" data-transition-speed="{transitionSpeed}" data-auto-animate={autoAnimate}
-				 data-auto-animate-id="{autoAnimateID}" data-auto-animate-restart={autoAnimateRestart}>
+				 data-auto-animate-id="{autoAnimateID}" data-auto-animate-restart={autoAnimateRestart}
+				 data-background-image={backgroundImage} data-background-size={backgroundSize}>
 	{@render children()}
 </section>

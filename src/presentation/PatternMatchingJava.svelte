@@ -177,7 +177,7 @@ switch (event) {
     }
 
     p.feature-list {
-        font-size: 0.7em;
+        font-size: 0.6em;
     }
 
 </style>
