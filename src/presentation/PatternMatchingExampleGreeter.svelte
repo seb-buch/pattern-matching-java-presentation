@@ -335,6 +335,44 @@ String greetUser(User user) {
 }`,
 ]
 
+let errorLogicPatternMatching: string[] = [
+	`
+String greetWhenError(int errorCode) {
+\treturn switch (errorCode) {
+\t};
+}`,
+	`
+String greetWhenError(int errorCode) {
+\treturn switch (errorCode) {
+\t\tcase 401 -> "Oops, couldn't log you in (reason: bad credentials).";
+\t};
+}`,
+	`
+String greetWhenError(int errorCode) {
+\treturn switch (errorCode) {
+\t\tcase 401 -> "Oops, couldn't log you in (reason: bad credentials).";
+\t\tcase 404 -> "Sorry, this account has been deleted or doesn't exist.";
+\t};
+}`,
+	`
+String greetWhenError(int errorCode) {
+\treturn switch (errorCode) {
+\t\tcase 401 -> "Oops, couldn't log you in (reason: bad credentials).";
+\t\tcase 404 -> "Sorry, this account has been deleted or doesn't exist.";
+\t\tcase int i when (i >= 500 && i < 600) -> "Impossible to connect to the authentication server.";
+\t};
+}`,
+	`
+String greetWhenError(int errorCode) {
+\treturn switch (errorCode) {
+\t\tcase 401 -> "Oops, couldn't log you in (reason: bad credentials).";
+\t\tcase 404 -> "Sorry, this account has been deleted or doesn't exist.";
+\t\tcase int i when (i >= 500 && i < 600) -> "Impossible to connect to the authentication server.";
+\t\tcase int i -> String.format("An unknown error happened. (code: %d)", i);
+\t};
+}`,
+];
+
 function concatenateCodeChunks(chunks: string[], limit: number) : String{
 	return chunks.slice(0, limit+1).join('\n');
 }
@@ -410,30 +448,50 @@ function concatenateCodeChunks(chunks: string[], limit: number) : String{
 	</p>
 </Slide>
 
+<section>
 {#each { length : dataModelCodeChunks.length }, index}
 	{@render dataModelChunkSnippet(index)}
 {/each}
+</section>
 
+<section>
 {#each mainLogicNoPatternCodeChunks as chunk, index}
 	{@render logicChunkSnippet(chunk, index, 'Logique principale – pattern matching ❌')}
 {/each}
+</section>
 
+<section>
 {#each authenticatedLogicNoPatternCodeChunks as chunk, index}
 	{@render logicChunkSnippet(chunk, index, 'Cas utilisateur authentifié – pattern matching ❌')}
 {/each}
+</section>
 
+<section>
 {#each authenticatedLogicDefenseNoPatternCodeChunks as chunk, index}
 	{@render logicChunkSnippet(chunk, index, 'Cas utilisateur authentifié (alt) – pattern matching ❌')}
 {/each}
+</section>
 
+<section>
 {#each errorLogicNoPatternCodeChunks as chunk, index}
 	{@render logicChunkSnippet(chunk, index, 'Cas erreur d\'authentification – pattern matching ❌')}
 {/each}
+</section>
 
+<section>
 {#each mainLogicPatternCodeChunks as chunk, index}
 	{@render logicChunkSnippet(chunk, index, 'Logique principale – pattern matching ✅')}
 {/each}
+</section>
 
+<section>
 {#each authenticatedLogicPatternCodeChunks as chunk, index}
 	{@render logicChunkSnippet(chunk, index, 'Cas utilisateur authentifié – pattern matching ✅')}
 {/each}
+</section>
+
+<section>
+{#each errorLogicPatternMatching as chunk, index}
+	{@render logicChunkSnippet(chunk, index, 'Cas erreur d\'authentification – pattern matching ✅')}
+{/each}
+</section>
