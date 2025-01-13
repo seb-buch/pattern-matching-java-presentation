@@ -3,6 +3,13 @@ import photo from './assets/wam.png';
 </script>
 
 <style>
+    @font-face {
+        font-family: "JetBrainsMono Nerd Font Mono";
+        font-style: normal;
+        font-weight: 400;
+        src: url('https://raw.githubusercontent.com/ryanoasis/nerd-fonts/refs/tags/v3.3.0/patched-fonts/JetBrainsMono/Ligatures/Regular/JetBrainsMonoNerdFontMono-Regular.ttf') format('truetype');
+    }
+		
     div.box {
         width: 50%;
         position: absolute;
