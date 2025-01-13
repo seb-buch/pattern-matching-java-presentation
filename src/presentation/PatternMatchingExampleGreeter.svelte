@@ -2,8 +2,9 @@
 import Slide from '$lib/Slide.svelte';
 import Code from '$lib/Code.svelte';
 import VerticalSpacer from '$lib/VerticalSpacer.svelte';
+import Footnote from '$lib/Footnote.svelte';
 
-type GreeterIO = { input: string, output: string };
+type GreeterIO = { input: string, output: string  };
 let greeterIOs: GreeterIO[] = [
 	{ input: 'Visiteur anonyme', output: 'Welcome guest!' },
 	{ input: 'Utilisateur', output: 'Hello {username}, {welcome_message}!' },
@@ -45,78 +46,180 @@ type LogicStep = {
 	authenticatedLogidChunk:string,
 
 }
+
 let mainLogicNoPatternCodeChunks:string[]=[
 	`
 String getGreetingFromAuthenticationState(AuthenticationState state) {
 }`,
 	`
 String getGreetingFromAuthenticationState(AuthenticationState state) {
-		if (state instanceof Unauthenticated) {
-				return "Welcome guest!";
-		}
+\t// cas: utilisateur non authentifié
+\tif (state instanceof Unauthenticated) {
+\t\treturn "Welcome guest!";
+\t}
 }`,
 	`
 String getGreetingFromAuthenticationState(AuthenticationState state) {
-		if (state instanceof Unauthenticated) {
-				return "Welcome guest!";
-		}
-		if (state instanceof Authenticated) {
-				Authenticated authenticated = (Authenticated) state;
-				User user = authenticated.user();
-				String greeting = greetUser(user);
-		}
+\t// cas: utilisateur non authentifié
+\tif (state instanceof Unauthenticated) {
+\t\treturn "Welcome guest!";
+\t}
+
+\t// cas: utilisateur authentifié
+\tif (state instanceof Authenticated) {
+\t\tAuthenticated authenticated = (Authenticated) state;
+\t\tUser user = authenticated.user();
+
+\t\t// distinction du type d'utilisateur
+\t\tString greeting = greetUser(user);
+\t}
 }`,
 	`
 String getGreetingFromAuthenticationState(AuthenticationState state) {
-		if (state instanceof Unauthenticated) {
-				return "Welcome guest!";
-		}
-		if (state instanceof Authenticated) {
-				Authenticated authenticated = (Authenticated) state;
-				User user = authenticated.user();
-				String greeting = greetUser(user);
-				LocalDateTime lastConnection = authenticated.lastConnection();
-				if (lastConnection == null) {
-						return String.format("%s, welcome!", greeting);
-				}
-				return String.format("%s, glad you are back!", greeting);
-		}
+\t// cas: utilisateur non authentifié
+\tif (state instanceof Unauthenticated) {
+\t\treturn "Welcome guest!";
+\t}
+
+\t// cas: utilisateur authentifié
+\tif (state instanceof Authenticated) {
+\t\tAuthenticated authenticated = (Authenticated) state;
+\t\tUser user = authenticated.user();
+
+\t\t// distinction du type d'utilisateur
+\t\tString greeting = greetUser(user);
+
+\t\t// distinction nouvel utilisateur / utilisateur récurrent
+\t\tLocalDateTime lastConnection = authenticated.lastConnection();
+\t\tif (lastConnection == null) {
+\t\t\treturn String.format("%s, welcome!", greeting);
+\t\t}
+\t\treturn String.format("%s, glad you are back!", greeting);
+\t}
 }`,
 	`
 String getGreetingFromAuthenticationState(AuthenticationState state) {
-		if (state instanceof Unauthenticated) {
-				return "Welcome guest!";
-		}
-		if (state instanceof Authenticated) {
-				Authenticated authenticated = (Authenticated) state;
-				User user = authenticated.user();
-				String greeting = greetUser(user);
-				LocalDateTime lastConnection = authenticated.lastConnection();
-				if (lastConnection == null) {
-						return String.format("%s, welcome!", greeting);
-				}
-				return String.format("%s, glad you are back!", greeting);
-		}
-		AuthenticationError errorState = (AuthenticationError) state;
-		return greetWhenError(errorState.errorCode());
+\t// cas: utilisateur non authentifié
+\tif (state instanceof Unauthenticated) {
+\t\treturn "Welcome guest!";
+\t}
+
+\t// cas: utilisateur authentifié
+\tif (state instanceof Authenticated) {
+\t\tAuthenticated authenticated = (Authenticated) state;
+\t\tUser user = authenticated.user();
+
+\t\t// distinction du type d'utilisateur
+\t\tString greeting = greetUser(user);
+
+\t\t// distinction nouvel utilisateur / utilisateur récurrent
+\t\tLocalDateTime lastConnection = authenticated.lastConnection();
+\t\tif (lastConnection == null) {
+\t\t\treturn String.format("%s, welcome!", greeting);
+\t\t}
+\t\treturn String.format("%s, glad you are back!", greeting);
+\t}
+
+\t// cas: erreur d'authentification
+\tAuthenticationError errorState = (AuthenticationError) state;
+\treturn greetWhenError(errorState.errorCode());
 }`,
 ];
+
+let mainLogicPatternCodeChunks:string[] = [
+	`
+String getGreetingFromAuthenticationState(AuthenticationState state) {
+\treturn switch (state) {
+\t};
+}`,
+	`
+String getGreetingFromAuthenticationState(AuthenticationState state) {
+\treturn switch (state) {
+\t\t// cas: utilisateur non authentifié
+\t\tcase Unauthenticated() -> "Welcome guest!";
+\t};
+}`,
+	`
+String getGreetingFromAuthenticationState(AuthenticationState state) {
+\treturn switch (state) {
+\t\t// cas: utilisateur non authentifié
+\t\tcase Unauthenticated() -> "Welcome guest!";
+
+\t\t// cas: utilisateur authentifié (nouvel utilisateur)
+\t\tcase Authenticated(
+\t\t\t\tLocalDateTime lastConnection,
+\t\t\t\tUser user
+\t\t) when lastConnection == null -> greetUser(user) + ", welcome!";
+\t};
+}`,
+	`
+String getGreetingFromAuthenticationState(AuthenticationState state) {
+\treturn switch (state) {
+\t\t// cas: utilisateur non authentifié
+\t\tcase Unauthenticated() -> "Welcome guest!";
+
+\t\t// cas: utilisateur authentifié (nouvel utilisateur)
+\t\tcase Authenticated(
+\t\t\t\tLocalDateTime lastConnection,
+\t\t\t\tUser user
+\t\t) when lastConnection == null -> greetUser(user) + ", welcome!";
+
+\t\t// cas: utilisateur authentifié (utilisateur récurrent)
+\t\tcase Authenticated(
+\t\t\t\tLocalDateTime _,
+\t\t\t\tUser user
+\t\t) -> greetUser(user) + ", glad you are back!";
+\t};
+}`,
+	`
+String getGreetingFromAuthenticationState(AuthenticationState state) {
+\treturn switch (state) {
+\t\t// cas: utilisateur non authentifié
+\t\tcase Unauthenticated() -> "Welcome guest!";
+
+\t\t// cas: utilisateur authentifié (nouvel utilisateur)
+\t\tcase Authenticated(
+\t\t\t\tLocalDateTime lastConnection,
+\t\t\t\tUser user
+\t\t) when lastConnection == null -> greetUser(user) + ", welcome!";
+
+\t\t// cas: utilisateur authentifié (utilisateur récurrent)
+\t\tcase Authenticated(
+\t\t\t\tLocalDateTime _,
+\t\t\t\tUser user
+\t\t) -> greetUser(user) + ", glad you are back!";
+
+\t\t// cas: erreur d'authentification
+\t\tcase AuthenticationError(int errorCode) -> greetWhenError(errorCode);
+\t};
+}`,
+];
+
 
 let authenticatedLogicNoPatternCodeChunks: string[] = [
 	`
 String greetUser(User user) {
-		if (user instanceof NormalUser) {
-				return String.format("Hello %s", user.username());
-		}
 }`,
 	`
 String greetUser(User user) {
-		if (user instanceof NormalUser) {
-				return String.format("Hello %s", user.username());
-		}
-		if (user instanceof AdminUser adminUser && adminUser.adminLevel() == AdminLevel.ROOT)
-				return "Greetings grand master";
-		return String.format("Hi %s", user.username());
+\t// cas: utilisateur normal
+\tif (user instanceof NormalUser) {
+\t\treturn String.format("Hello %s", user.username());
+\t}
+}`,
+	`
+String greetUser(User user) {
+\t// cas: utilisateur normal
+\tif (user instanceof NormalUser) {
+\t\treturn String.format("Hello %s", user.username());
+\t}
+
+\t// cas: root
+\tif (user instanceof AdminUser adminUser && adminUser.adminLevel() == AdminLevel.ROOT)
+\t\treturn "Greetings grand master";
+
+\t// cas: admin
+\treturn String.format("Hi %s", user.username());
 }`,
 ];
 
@@ -126,183 +229,87 @@ String greetUser(User user) {
 }`,
 	`
 String greetUser(User user) {
-		if (user instanceof NormalUser) {
-				return String.format("Hello %s", user.username());
-		}
+\t// cas: utilisateur normal
+\tif (user instanceof NormalUser) {
+\t\treturn String.format("Hello %s", user.username());
+\t}
 }`,
 	`
 String greetUser(User user) {
-		if (user instanceof NormalUser) {
-				return String.format("Hello %s", user.username());
-		}
-		if (user instanceof AdminUser adminUser) {
-		}
+\t// cas: utilisateur normal
+\tif (user instanceof NormalUser) {
+\t\treturn String.format("Hello %s", user.username());
+\t}
+
+\tif (user instanceof AdminUser adminUser) {
+\t\tAdminLevel adminLevel = adminUser.adminLevel();
+\t}
 }`,
 	`
 String greetUser(User user) {
-		if (user instanceof NormalUser) {
-				return String.format("Hello %s", user.username());
-		}
-		if (user instanceof AdminUser adminUser) {
-				AdminLevel adminLevel = adminUser.adminLevel();
-				if (adminLevel == AdminLevel.ROOT)
-						return "Greetings grand master";
-				if (adminLevel == AdminLevel.ADMIN)
-						return String.format("Hi %s", user.username());
-		}
+\t// cas: utilisateur normal
+\tif (user instanceof NormalUser) {
+\t\treturn String.format("Hello %s", user.username());
+\t}
+
+\tif (user instanceof AdminUser adminUser) {
+\t\tAdminLevel adminLevel = adminUser.adminLevel();
+
+\t\t// cas: root
+\t\tif (adminLevel == AdminLevel.ROOT)
+\t\t\treturn "Greetings grand master";
+
+\t\t// cas: admin
+\t\tif (adminLevel == AdminLevel.ADMIN)
+\t\t\treturn String.format("Hi %s", user.username());
+\t}
 }`,
 	`
 String greetUser(User user) {
-		if (user instanceof NormalUser) {
-				return String.format("Hello %s", user.username());
-		}
-		if (user instanceof AdminUser adminUser) {
-				AdminLevel adminLevel = adminUser.adminLevel();
-				if (adminLevel == AdminLevel.ROOT)
-						return "Greetings grand master";
-				if (adminLevel == AdminLevel.ADMIN)
-						return String.format("Hi %s", user.username());
-				throw new AssertionError("Unknown admin level:" + adminLevel);
-		}
+\t// cas: utilisateur normal
+\tif (user instanceof NormalUser) {
+\t\treturn String.format("Hello %s", user.username());
+\t}
+
+\tif (user instanceof AdminUser adminUser) {
+\t\tAdminLevel adminLevel = adminUser.adminLevel();
+
+\t\t// cas: root
+\t\tif (adminLevel == AdminLevel.ROOT)
+\t\t\treturn "Greetings grand master";
+
+\t\t// cas: admin
+\t\tif (adminLevel == AdminLevel.ADMIN)
+\t\t\treturn String.format("Hi %s", user.username());
+
+\t\t// garde-fou
+\t\tthrow new AssertionError("Unknown admin level:" + adminLevel);
+\t}
 }`,
 	`
 String greetUser(User user) {
-		if (user instanceof NormalUser) {
-				return String.format("Hello %s", user.username());
-		}
-		if (user instanceof AdminUser adminUser) {
-				AdminLevel adminLevel = adminUser.adminLevel();
-				if (adminLevel == AdminLevel.ROOT)
-						return "Greetings grand master";
-				if (adminLevel == AdminLevel.ADMIN)
-						return String.format("Hi %s", user.username());
-				throw new AssertionError("Unknown admin level:" + adminLevel);
-		}
-		throw new AssertionError("Unknown user:" + user);
-}`,
-];
+\t// cas: utilisateur normal
+\tif (user instanceof NormalUser) {
+\t\treturn String.format("Hello %s", user.username());
+\t}
 
-let errorLogicNoPatternCodeChunks:string[] = [
-	`
-String greetWhenError(AuthenticationError authenticationError) {
-		int errorCode = authenticationError.errorCode();
+\tif (user instanceof AdminUser adminUser) {
+\t\tAdminLevel adminLevel = adminUser.adminLevel();
 
-		return switch (errorCode) {
-		};
-}`,
-	`
-String greetWhenError(AuthenticationError authenticationError) {
-		int errorCode = authenticationError.errorCode();
+\t\t// cas: root
+\t\tif (adminLevel == AdminLevel.ROOT)
+\t\t\treturn "Greetings grand master";
 
-		return switch (errorCode) {
-				case 401 -> "Oops, couldn't log you in (reason: bad credentials).";
-		};
-}`,
-	`
-String greetWhenError(AuthenticationError authenticationError) {
-		int errorCode = authenticationError.errorCode();
+\t\t// cas: admin
+\t\tif (adminLevel == AdminLevel.ADMIN)
+\t\t\treturn String.format("Hi %s", user.username());
 
-		return switch (errorCode) {
-				case 401 -> "Oops, couldn't log you in (reason: bad credentials).";
-				case 404 -> "Sorry, this account has been deleted or doesn't exist.";
-		};
-}`,
-	`
-String greetWhenError(AuthenticationError authenticationError) {
-		int errorCode = authenticationError.errorCode();
+\t\t// garde-fou
+\t\tthrow new AssertionError("Unknown admin level:" + adminLevel);
+\t}
 
-		return switch (errorCode) {
-				case 401 -> "Oops, couldn't log you in (reason: bad credentials).";
-				case 404 -> "Sorry, this account has been deleted or doesn't exist.";
-				default -> {
-				}
-		};
-}`,
-	`
-String greetWhenError(AuthenticationError authenticationError) {
-		int errorCode = authenticationError.errorCode();
-
-		return switch (errorCode) {
-				case 401 -> "Oops, couldn't log you in (reason: bad credentials).";
-				case 404 -> "Sorry, this account has been deleted or doesn't exist.";
-				default -> {
-						if (errorCode >= 500 && errorCode < 600)
-								yield "Impossible to connect to the authentication server.";
-				}
-		};
-}`,
-	`
-String greetWhenError(AuthenticationError authenticationError) {
-		int errorCode = authenticationError.errorCode();
-
-		return switch (errorCode) {
-				case 401 -> "Oops, couldn't log you in (reason: bad credentials).";
-				case 404 -> "Sorry, this account has been deleted or doesn't exist.";
-				default -> {
-						if (errorCode >= 500 && errorCode < 600)
-								yield "Impossible to connect to the authentication server.";
-						yield String.format("An unknown error happened. (code: %d)", errorCode);
-				}
-		};
-}`,
-];
-
-let mainLogicPatternCodeChunks:string[] = [
-	`
-String getGreetingFromAuthenticationState(AuthenticationState state) {
-		return switch (state) {
-		};
-}`,
-	`
-String getGreetingFromAuthenticationState(AuthenticationState state) {
-		return switch (state) {
-				case Unauthenticated() -> "Welcome guest!";
-		};
-}`,
-	`
-String getGreetingFromAuthenticationState(AuthenticationState state) {
-		return switch (state) {
-				case Unauthenticated() -> "Welcome guest!";
-
-				case Authenticated(
-								LocalDateTime lastConnection,
-								User user
-				) when lastConnection == null -> greetUser(user) + ", welcome!";
-		};
-}`,
-	`
-String getGreetingFromAuthenticationState(AuthenticationState state) {
-		return switch (state) {
-				case Unauthenticated() -> "Welcome guest!";
-
-				case Authenticated(
-								LocalDateTime lastConnection,
-								User user
-				) when lastConnection == null -> greetUser(user) + ", welcome!";
-
-				case Authenticated(
-								LocalDateTime _,
-								User user
-				) -> greetUser(user) + ", glad you are back!";
-		};
-}`,
-	`
-String getGreetingFromAuthenticationState(AuthenticationState state) {
-		return switch (state) {
-				case Unauthenticated() -> "Welcome guest!";
-
-				case Authenticated(
-								LocalDateTime lastConnection,
-								User user
-				) when lastConnection == null -> greetUser(user) + ", welcome!";
-
-				case Authenticated(
-								LocalDateTime _,
-								User user
-				) -> greetUser(user) + ", glad you are back!";
-
-				case AuthenticationError(int errorCode) -> greetWhenError(errorCode);
-		};
+\t// garde-fou
+\tthrow new AssertionError("Unknown user:" + user);
 }`,
 ];
 
@@ -315,21 +322,30 @@ String greetUser(User user) {
 	`
 String greetUser(User user) {
 \treturn switch (user) {
+\t\t// cas: root
 \t\tcase AdminUser(String _, AdminLevel lvl) when lvl == AdminLevel.ROOT -> "Greetings grand master";
 \t};
 }`,
 	`
 String greetUser(User user) {
 \treturn switch (user) {
+\t\t// cas: root
 \t\tcase AdminUser(String _, AdminLevel lvl) when lvl == AdminLevel.ROOT -> "Greetings grand master";
+
+\t\t// cas: admin
 \t\tcase AdminUser(String username, AdminLevel _) -> "Hi " + username;
 \t};
 }`,
 	`
 String greetUser(User user) {
 \treturn switch (user) {
+\t\t// cas: root
 \t\tcase AdminUser(String _, AdminLevel lvl) when lvl == AdminLevel.ROOT -> "Greetings grand master";
+
+\t\t// cas: admin
 \t\tcase AdminUser(String username, AdminLevel _) -> "Hi " + username;
+
+\t\t// cas: utilisateur normal
 \t\tcase NormalUser(String username) -> "Hello " + username;
 \t};
 }`,
@@ -384,6 +400,10 @@ function concatenateCodeChunks(chunks: string[], limit: number) : String{
         font-style: italic;
     }
 
+		p.conclusion {
+				padding-top: 1em;
+		}
+
     table {
         margin: 1em auto;
         font-size: 0.9em;
@@ -409,26 +429,30 @@ function concatenateCodeChunks(chunks: string[], limit: number) : String{
 	<tr class="fragment" data-fragment-index="{index}">
 		<td>{greeterIO.input}</td>
 		<td>⟹</td>
-		<td><code>{greeterIO.output}</code></td>
+		<td><code style="color:var(--r-heading-color)">{greeterIO.output}</code></td>
 	</tr>
 {/snippet}
 
 {#snippet dataModelChunkSnippet(limit: number)}
 <Slide autoAnimate autoAnimateRestart="{limit===0 ? true:null}">
 	<h3>Modèle de données</h3>
+	<VerticalSpacer height="2em" />
 	<Code id="greeter-data" width="1600px">
 		{concatenateCodeChunks(dataModelCodeChunks, limit)}
 	</Code>
 </Slide>
 {/snippet}
 
-{#snippet logicChunkSnippet(chunk:string, index: number, title: string)}
+{#snippet logicChunkSnippet(chunk:string, index: number, title: string, conclusion: string | undefined=undefined, separation: string='2em')}
 	<Slide autoAnimate autoAnimateRestart="{index===0 ? true:null}">
 		<h3>{title}</h3>
-		<VerticalSpacer height="2em"/>
+		<VerticalSpacer height="{separation}"/>
 		<Code id="greeter-nopattern" width="1600px">
 		{chunk}
 	</Code>
+		{#if conclusion}
+			<p class="fragment conclusion">{conclusion}</p>
+		{/if}
 	</Slide>
 {/snippet}
 
@@ -456,42 +480,122 @@ function concatenateCodeChunks(chunks: string[], limit: number) : String{
 
 <section>
 {#each mainLogicNoPatternCodeChunks as chunk, index}
-	{@render logicChunkSnippet(chunk, index, 'Logique principale – pattern matching ❌')}
-{/each}
-</section>
-
-<section>
-{#each authenticatedLogicNoPatternCodeChunks as chunk, index}
-	{@render logicChunkSnippet(chunk, index, 'Cas utilisateur authentifié – pattern matching ❌')}
-{/each}
-</section>
-
-<section>
-{#each authenticatedLogicDefenseNoPatternCodeChunks as chunk, index}
-	{@render logicChunkSnippet(chunk, index, 'Cas utilisateur authentifié (alt) – pattern matching ❌')}
-{/each}
-</section>
-
-<section>
-{#each errorLogicNoPatternCodeChunks as chunk, index}
-	{@render logicChunkSnippet(chunk, index, 'Cas erreur d\'authentification – pattern matching ❌')}
+	{@render logicChunkSnippet(chunk, index, 'Logique principale – pattern matching ❌', index===mainLogicNoPatternCodeChunks.length-1 ? 'Exhaustivité 😔' : undefined, '1em')}
 {/each}
 </section>
 
 <section>
 {#each mainLogicPatternCodeChunks as chunk, index}
-	{@render logicChunkSnippet(chunk, index, 'Logique principale – pattern matching ✅')}
+	{@render logicChunkSnippet(chunk, index, 'Logique principale – pattern matching ✅', index===mainLogicPatternCodeChunks.length-1 ? 'Exhaustivité 😃' : undefined, '1em')}
 {/each}
 </section>
 
 <section>
-{#each authenticatedLogicPatternCodeChunks as chunk, index}
-	{@render logicChunkSnippet(chunk, index, 'Cas utilisateur authentifié – pattern matching ✅')}
+{#each authenticatedLogicNoPatternCodeChunks as chunk, index}
+	{@render logicChunkSnippet(chunk, index, 'Distinction utilisateur authentifié – pattern matching ❌', index===authenticatedLogicNoPatternCodeChunks.length-1 ? 'Exhaustivité 😔' : undefined, '3em')}
 {/each}
 </section>
 
 <section>
-{#each errorLogicPatternMatching as chunk, index}
-	{@render logicChunkSnippet(chunk, index, 'Cas erreur d\'authentification – pattern matching ✅')}
+{#each authenticatedLogicDefenseNoPatternCodeChunks as chunk, index}
+	{@render logicChunkSnippet(chunk, index, 'Distinction utilisateur authentifié (alt) – pattern matching ❌', index===authenticatedLogicDefenseNoPatternCodeChunks.length-1 ? 'Exhaustivité 😃 – Lisibilité 🫤' : undefined, '3em')}
 {/each}
+</section>
+
+<section>
+	{#each authenticatedLogicPatternCodeChunks as chunk, index}
+		{@render logicChunkSnippet(chunk, index, 'Cas utilisateur authentifié – pattern matching ✅', index===authenticatedLogicPatternCodeChunks.length-1 ? 'Exhaustivité 😃 – Lisibilité 😃' : undefined, '5em')}
+	{/each}
+</section>
+
+<section>
+	<Slide autoAnimate autoAnimateRestart>
+		<h3 data-id="title">Cas erreur d'authentification – pattern matching ❌</h3>
+		<VerticalSpacer height="5em"/>
+		<Code id="logic-error"  width="1400px">
+	 {`
+String greetWhenError(int errorCode) {
+\treturn switch (errorCode) {
+\t\t}
+\t};
+}
+`
+	 }
+	</Code>
+	</Slide>
+	<Slide autoAnimate>
+		<h3 data-id="title">Cas erreur d'authentification – pattern matching ❌</h3>
+		<VerticalSpacer height="5em"/>
+		<Code id="logic-error"  width="1400px">
+	 {`
+String greetWhenError(int errorCode) {
+\treturn switch (errorCode) {
+\t\tcase 401 -> "Oops, couldn't log you in (reason: bad credentials).";
+\t\tcase 404 -> "Sorry, this account has been deleted or doesn't exist.";
+\t\t}
+\t};
+}
+`
+	 }
+	</Code>
+	</Slide>
+	<Slide autoAnimate>
+		<h3 data-id="title">Cas erreur d'authentification – pattern matching ❌</h3>
+		<VerticalSpacer height="5em"/>
+		<Code id="logic-error"  width="1400px">
+	 {`
+String greetWhenError(int errorCode) {
+\treturn switch (errorCode) {
+\t\tcase 401 -> "Oops, couldn't log you in (reason: bad credentials).";
+\t\tcase 404 -> "Sorry, this account has been deleted or doesn't exist.";
+\t\tdefault -> {
+\t\t\tif (errorCode >= 500 && errorCode < 600)
+\t\t\t\tyield "Impossible to connect to the authentication server.";
+\t\t}
+\t};
+}
+`
+	 }
+	</Code>
+	</Slide>
+	<Slide autoAnimate>
+		<h3 data-id="title">Cas erreur d'authentification – pattern matching ❌</h3>
+		<VerticalSpacer height="5em"/>
+		<Code id="logic-error"  width="1400px">
+	 {`
+String greetWhenError(int errorCode) {
+\treturn switch (errorCode) {
+\t\tcase 401 -> "Oops, couldn't log you in (reason: bad credentials).";
+\t\tcase 404 -> "Sorry, this account has been deleted or doesn't exist.";
+\t\tdefault -> {
+\t\t\tif (errorCode >= 500 && errorCode < 600)
+\t\t\t\tyield "Impossible to connect to the authentication server.";
+\t\t\tyield String.format("An unknown error happened. (code: %d)", errorCode);
+\t\t}
+\t};
+}
+`
+	 }
+	</Code>
+		<p class="fragment conclusion">Exhaustivité 😃 – Lisibilité 🫤</p>
+	</Slide>
+	<Slide autoAnimate >
+		<h3 data-id="title">Cas erreur d'authentification – pattern matching ✅</h3>
+		<VerticalSpacer height="5em"/>
+		<Code id="logic-error" width="1400px">
+	 {`
+String greetWhenError(int errorCode) {
+\treturn switch (errorCode) {
+\t\tcase 401 -> "Oops, couldn't log you in (reason: bad credentials).";
+\t\tcase 404 -> "Sorry, this account has been deleted or doesn't exist.";
+\t\tcase int i when (i >= 500 && i < 600) -> "Impossible to connect to the authentication server.";
+\t\tcase int i -> String.format("An unknown error happened. (code: %d)", i);
+\t};
+}
+`
+	 }
+	</Code>
+		<p class="fragment conclusion">Exhaustivité 😃 – Lisibilité 😃</p>
+		<Footnote><em>Pattern matching</em> avec type primitif &rarr; Java 23 <em>Preview</em></Footnote>
+	</Slide>
 </section>

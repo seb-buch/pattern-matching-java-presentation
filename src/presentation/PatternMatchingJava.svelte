@@ -1,7 +1,6 @@
 <script lang="ts">
 import Slide from '$lib/Slide.svelte';
 import Code from '$lib/Code.svelte';
-import Footnote from '$lib/Footnote.svelte';
 
 type JavaJEP = {
 	targetVersion: string,
@@ -42,11 +41,12 @@ enum PageLoadingState {
     LOADED,
     ERROR,
 }
+
 final class Click implements WebEvent {
     private int x, y;
     // ...
 }`,
-			desiredWidth: '500px'
+			desiredWidth: '550px'
 		}
 	},
 	{
@@ -122,7 +122,7 @@ if (event instanceof Click click) {
 		return String.format("Clicked at x=%d, y=%d", click.getX(), click.getY());
 }
 `,
-			desiredWidth: '1150px'
+			desiredWidth: '1200px'
 		}
 	},
 	{
@@ -174,10 +174,26 @@ switch (event) {
                 margin: 0;
             }
         }
+
     }
 
     p.feature-list {
         font-size: 0.6em;
+    }
+
+    .grow-snippet {
+        overflow: hidden;
+        opacity: 0;
+        max-height: 0;
+        transition-property: max-height, opacity;
+        transition-delay: 0s, 0.5s;
+        transition-duration: 1s;
+    }
+
+    .grow-snippet.visible, li:first-child.grow-snippet {
+        background: none;
+        max-height: 500px;
+        opacity: 1;
     }
 
 </style>
@@ -217,39 +233,32 @@ switch (event) {
 {/snippet}
 
 {#snippet patternMatchingKeywordSnippet(keyword: PatternMatchingKeyword)}
-	<div class="fragment">
-		<p><code>{keyword.keyword}</code></p>
-		{#if keyword.associatedFeatures}
-			{@render javaFeatureListSnippet(keyword.associatedFeatures)}
-		{/if}
-		{#if keyword.exampleCode}
+	<p><code>{keyword.keyword}</code></p>
+	{#if keyword.associatedFeatures}
+		{@render javaFeatureListSnippet(keyword.associatedFeatures)}
+	{/if}
+	{#if keyword.exampleCode}
 	<Code language="java" id="example-code" width="{keyword.exampleCode.desiredWidth ?? 'auto'}" lineNumbers="{null}">
 		{keyword.exampleCode.code}
 	</Code>
-		{/if}
-	</div>
+	{/if}
 {/snippet}
 
+{#snippet patternMatchingComponetSnippet(component: string, keywords: PatternMatchingKeyword[])}
+	<Slide>
+		<div style="display: flex; align-items: center; justify-content: flex-start;flex-direction: column; height: 100%">
+			<h3>Le <em>Pattern Matching</em> en Java &ndash; {component}</h3>
 
-<Slide>
-	<h3>Le <em>Pattern Matching</em> en Java &ndash; les types<sup>*</sup></h3>
+			<ul style="display: flex; align-items: center; justify-content: center;flex-direction: column; flex-grow: 1">
+				{#each keywords as keyword, index}
+					<li class="grow-snippet visible {index===0 ? '' : 'fragment custom'}">
+						{@render patternMatchingKeywordSnippet(keyword)}
+					</li>
+				{/each}
+			</ul>
+		</div>
+	</Slide>
+{/snippet}
 
-	<ul>
-		{#each patternMatchingTypes as keyword}
-			<li>{@render patternMatchingKeywordSnippet(keyword)}</li>
-		{/each}
-	</ul>
-
-	<Footnote>* Liste non exhaustive</Footnote>
-
-</Slide>
-
-<Slide>
-	<h3>Le <em>Pattern Matching</em> en Java &ndash; les "filtres"</h3>
-
-	<ul>
-		{#each patternMatchingImplementations as keyword}
-			<li>{@render patternMatchingKeywordSnippet(keyword)}</li>
-		{/each}
-	</ul>
-</Slide>
+{@render patternMatchingComponetSnippet("structure de données", patternMatchingTypes)}
+{@render patternMatchingComponetSnippet("les \"filtres\" d'extraction", patternMatchingImplementations)}
