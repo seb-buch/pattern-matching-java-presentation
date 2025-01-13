@@ -1,6 +1,7 @@
 <script>
 import Slide from '$lib/Slide.svelte';
 import background from './assets/eventBackground.png';
+import qrCode from './assets/qr-code-pres.svg';
 </script>
 
 <style>
@@ -27,7 +28,7 @@ import background from './assets/eventBackground.png';
 
     figure {
         img {
-            height: 400px;
+            height: 350px;
             border: 5px solid var(--r-heading-color);
         }
 
@@ -43,8 +44,8 @@ import background from './assets/eventBackground.png';
 		<h1>Merci !</h1>
 		<p><a href="mailto:s.buchoux@groupeonepoint.com">s.buchoux@groupeonepoint.com</a></p>
 		<figure>
-			<img src="" alt="QRcode">
-			<figcaption>Les diapos</figcaption>
+			<img src="{qrCode}" alt="QRcode">
+			<figcaption>La présentation</figcaption>
 		</figure>
 	</div>
 </Slide>
