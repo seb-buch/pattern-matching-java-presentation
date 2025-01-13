@@ -7,17 +7,20 @@ import photo from './assets/wam.png';
         font-family: "JetBrainsMono Nerd Font Mono";
         font-style: normal;
         font-weight: 400;
-        src: url('https://raw.githubusercontent.com/ryanoasis/nerd-fonts/refs/tags/v3.3.0/patched-fonts/JetBrainsMono/Ligatures/Regular/JetBrainsMonoNerdFontMono-Regular.ttf') format('truetype');
+        src: url('https://github.com/ryanoasis/nerd-fonts/raw/refs/heads/master/patched-fonts/JetBrainsMono/Ligatures/Regular/JetBrainsMonoNerdFont-Regular.ttf') format('truetype');
     }
-		
+
     div.box {
         width: 50%;
         position: absolute;
         left: 40%;
-        top: 300px;
+        top: 250px;
 
         & p {
-            padding-bottom: 2em;
+            &:not(:last-child) {
+                padding-bottom: 1.5em;
+            }
+
             font-size: 1.2em;
 
             &.prenom {
@@ -25,7 +28,7 @@ import photo from './assets/wam.png';
             }
 
             & span {
-                font-family: "JetBrainsMono Nerd Font", sans-serif;
+                font-family: "JetBrainsMono Nerd Font Mono", sans-serif;
                 padding-right: 0.5em;
             }
         }
@@ -40,5 +43,6 @@ import photo from './assets/wam.png';
 		</p>
 		<p><span></span> Onepoint Toulouse</p>
 		<p><span></span> seb-buch</p>
+		<p><span>󰌻</span> sebastien-buchoux</p>
 	</div>
 </section>
