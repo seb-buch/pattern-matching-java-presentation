@@ -1,55 +1,37 @@
 <script>
-import Slide from '$lib/Slide.svelte';
-import VerticalSpacer from '$lib/VerticalSpacer.svelte';
+import photo from './assets/wam.png';
 </script>
 
 <style>
-    .three-column {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
+    div.box {
+        width: 50%;
+        position: absolute;
+        left: 40%;
+        top: 300px;
 
-        & > div {
-            width: 30%;
+        & p {
+            padding-bottom: 2em;
+            font-size: 1.2em;
 
-            h4 {
-                padding-bottom: 2em;
+            &.prenom {
+                color: var(--r-heading-color);
             }
 
-            p {
-                font-size: 0.8em;
-                padding-bottom: 2em;
+            & span {
+                font-family: "JetBrainsMono Nerd Font", sans-serif;
+                padding-right: 0.5em;
             }
         }
     }
 </style>
 
-<Slide>
-	<h3>À propos de moi</h3>
-	<VerticalSpacer height="3em" />
-	<div class="three-column">
-		<div>
-			<h4>Qui?</h4>
-			<p>
-				Enseignant-chercheur reconverti en architecte/tech lead chez Onepoint
-			</p>
-		</div>
-		<div>
-			<h4>Intérêts</h4>
-			<p>
-				Dév /optimisation d'outils d'analyse de données scientifiques orientés HPC (efficience, calculs parallélisés,
-				etc.)
-			</p>
-			<p>
-				Avocat des pratiques Continuous Delivery:<br />
-				Automatisation (tests, déploiement), TDD, qualité et maintenabilité du code…
-			</p>
-		</div>
-		<div>
-			<h4>Technos ?</h4>
-			<p>
-				Python, Cython, C, Typescript, HTML/CSS, Rust, Java
-			</p>
-		</div>
+<section data-background-image="{photo}" data-background-size="600px" data-background-position="bottom 0 left 150px">
+	<div class="box">
+		<p class="prenom">Sébastien Buchoux</p>
+		<p>
+			Tech Lead / Architecte
+		</p>
+		<p><span></span> Onepoint Toulouse</p>
+		<p><span></span> seb-buch</p>
 	</div>
-</Slide>
+</section>
