@@ -2,6 +2,7 @@
 import Slide from '$lib/Slide.svelte';
 import background from './assets/eventBackground.png';
 import qrCode from './assets/qr-code-pres.svg';
+import feedback from './assets/feedback.png';
 </script>
 
 <style>
@@ -27,8 +28,11 @@ import qrCode from './assets/qr-code-pres.svg';
     }
 
     figure {
+        display: inline-block;
+        padding: 0 1em;
+
         img {
-            height: 350px;
+            height: 250px;
             border: 5px solid var(--r-heading-color);
         }
 
@@ -46,6 +50,10 @@ import qrCode from './assets/qr-code-pres.svg';
 		<figure>
 			<img src="{qrCode}" alt="QRcode">
 			<figcaption>La présentation</figcaption>
+		</figure>
+		<figure>
+			<img src="{feedback}" alt="QRcodeFeedback">
+			<figcaption>Le feedback</figcaption>
 		</figure>
 	</div>
 </Slide>
