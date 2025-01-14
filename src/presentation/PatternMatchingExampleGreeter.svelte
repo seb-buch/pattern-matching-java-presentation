@@ -322,33 +322,61 @@ String greetUser(User user) {
 	`
 String greetUser(User user) {
 \treturn switch (user) {
-\t\t// cas: root
-\t\tcase AdminUser(String _, AdminLevel lvl) when lvl == AdminLevel.ROOT -> "Greetings grand master";
-\t};
-}`,
-	`
-String greetUser(User user) {
-\treturn switch (user) {
-\t\t// cas: root
-\t\tcase AdminUser(String _, AdminLevel lvl) when lvl == AdminLevel.ROOT -> "Greetings grand master";
-
-\t\t// cas: admin
-\t\tcase AdminUser(String username, AdminLevel _) -> "Hi " + username;
-\t};
-}`,
-	`
-String greetUser(User user) {
-\treturn switch (user) {
-\t\t// cas: root
-\t\tcase AdminUser(String _, AdminLevel lvl) when lvl == AdminLevel.ROOT -> "Greetings grand master";
-
-\t\t// cas: admin
-\t\tcase AdminUser(String username, AdminLevel _) -> "Hi " + username;
 
 \t\t// cas: utilisateur normal
 \t\tcase NormalUser(String username) -> "Hello " + username;
 \t};
 }`,
+	`
+String greetUser(User user) {
+\treturn switch (user) {
+
+\t\t// cas: utilisateur normal
+\t\tcase NormalUser(String username) -> "Hello " + username;
+
+\t\tcase AdminUser(String username, AdminLevel adminLevel) -> {
+\t\t\tyield switch (adminLevel) {
+\t\t\t};
+\t\t}
+\t};
+}`,
+	`
+String greetUser(User user) {
+\treturn switch (user) {
+
+\t\t// cas: utilisateur normal
+\t\tcase NormalUser(String username) -> "Hello " + username;
+
+\t\tcase AdminUser(String username, AdminLevel adminLevel) -> {
+\t\t\tyield switch (adminLevel) {
+
+\t\t\t\t// cas: root
+\t\t\t\tcase ROOT -> "Greetings grand master";
+
+\t\t\t};
+\t\t}
+\t};
+}`,
+	`
+String greetUser(User user) {
+\treturn switch (user) {
+
+\t\t// cas: utilisateur normal
+\t\tcase NormalUser(String username) -> "Hello " + username;
+
+\t\tcase AdminUser(String username, AdminLevel adminLevel) -> {
+\t\t\tyield switch (adminLevel) {
+
+\t\t\t\t// cas: root
+\t\t\t\tcase ROOT -> "Greetings grand master";
+
+\t\t\t\t// cas: admin
+\t\t\t\tcase ADMIN -> String.format("Hi %s", username);
+\t\t\t};
+\t\t}
+\t};
+}`,
+
 ]
 
 let errorLogicPatternMatching: string[] = [
