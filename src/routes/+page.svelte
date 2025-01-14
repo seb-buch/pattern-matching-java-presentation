@@ -36,6 +36,10 @@
 
 </script>
 
+<svelte:head>
+	<script src="https://kit.fontawesome.com/b8d279694e.js" crossorigin="anonymous"></script>
+</svelte:head>
+
 <div class="reveal">
 	<div class="slides">
 		<Presentation />

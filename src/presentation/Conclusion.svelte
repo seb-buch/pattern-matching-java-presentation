@@ -38,15 +38,14 @@ import VerticalSpacer from '$lib/VerticalSpacer.svelte';
 			Sécurité et Robustesse:
 		</p>
 		<ul>
-			<li>Diminue les risques liés aux erreurs de type</li>
 			<li>Encourage un code plus concis et expressif</li>
-			<li>Exhausitivité des branchements logiques</li>
+			<li>Exhausitivité des branchements logiques à la compilation</li>
 		</ul>
 	</div>
 
 	<VerticalSpacer height="2em" />
 	<p class="conclusion fragment">
 		Le <em>pattern matching</em> n'est pas qu'une simplification syntaxique<br />
-		C'est une évolution qui améliore la productivité et la lisibilité du code Java moderne.
+		C'est une vraie évolution de Java qui améliore la maintenabilité du code.
 	</p>
 </Slide>

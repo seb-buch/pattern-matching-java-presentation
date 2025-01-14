@@ -37,14 +37,14 @@ let patternMatchingTypes: PatternMatchingKeyword[] = [
 		exampleCode: {
 			code: `
 enum PageLoadingState {
-    LOADING,
-    LOADED,
-    ERROR,
+\tLOADING,
+\tLOADED,
+\tERROR,
 }
 
 final class Click implements WebEvent {
-    private int x, y;
-    // ...
+\tprivate int x, y;
+\t// ...
 }`,
 			desiredWidth: '550px'
 		}
@@ -113,13 +113,14 @@ let patternMatchingImplementations: PatternMatchingKeyword[] = [
 		],
 		exampleCode: {
 			code: `
-// KeyPress: record
+// event: WebEvent
+// KeyPress: record -> pattern matching 😃
 if (event instanceof KeyPress(KeyEvent keyEvent)) {
-		// ... utilisation de keyEvent ...
+\t// ... utilisation de keyEvent ...
 }
-// Click: class
+// Click: class -> pattern matching 🫤
 if (event instanceof Click click) {
-		return String.format("Clicked at x=%d, y=%d", click.getX(), click.getY());
+\treturn String.format("Clicked at x=%d, y=%d", click.getX(), click.getY());
 }
 `,
 			desiredWidth: '1200px'
@@ -142,15 +143,16 @@ if (event instanceof Click click) {
 		],
 		exampleCode: {
 			code: `
+// event: WebEvent
 switch (event) {
-		case PageLoadingState.ERROR -> "Error";
-		case PageLoadingState _ -> "Page transition";
-		case KeyPress(KeyEvent keyevent) when keyevent.getKeyCode() == 27 -> {
-				System.out.println("Abort! Abort!");
-				yield "Escape pressed";
-		}
-		case KeyPress(KeyEvent keyevent) -> String.format("Key pressed: %s", keyevent.getKeyChar());
-		case Click click -> String.format("Clicked at x=%d, y=%d", click.getX(), click.getY());
+\tcase PageLoadingState.ERROR -> "Error"; // pas de pattern matching
+\tcase PageLoadingState _ -> "Page transition"; // motif ignoré
+\tcase KeyPress(KeyEvent keyevent) when keyevent.getKeyCode() == 27 -> { // when
+\t\tSystem.out.println("Abort! Abort!");
+\t\tyield "Escape pressed";
+\t}
+\tcase KeyPress(KeyEvent keyevent) -> String.format("Key pressed: %s", keyevent.getKeyChar());
+\tcase Click click -> String.format("Clicked at x=%d, y=%d", click.getX(), click.getY());
 }
 `,
 			desiredWidth: '1550px'

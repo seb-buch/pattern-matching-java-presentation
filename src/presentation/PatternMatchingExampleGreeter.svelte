@@ -398,6 +398,9 @@ function concatenateCodeChunks(chunks: string[], limit: number) : String{
     p.explanation {
         font-size: 0.7em;
         font-style: italic;
+				position: absolute;
+				bottom: 0;
+				right: 0;
     }
 
 		p.conclusion {
@@ -425,14 +428,6 @@ function concatenateCodeChunks(chunks: string[], limit: number) : String{
     }
 </style>
 
-{#snippet greeterIOSnippet(greeterIO: GreeterIO, index: Number)}
-	<tr class="fragment" data-fragment-index="{index}">
-		<td>{greeterIO.input}</td>
-		<td>⟹</td>
-		<td><code style="color:var(--r-heading-color)">{greeterIO.output}</code></td>
-	</tr>
-{/snippet}
-
 {#snippet dataModelChunkSnippet(limit: number)}
 <Slide autoAnimate autoAnimateRestart="{limit===0 ? true:null}">
 	<h3>Modèle de données</h3>
@@ -456,21 +451,60 @@ function concatenateCodeChunks(chunks: string[], limit: number) : String{
 	</Slide>
 {/snippet}
 
-<Slide>
-	<h3>Exemple concret: un <em>greeter</em></h3>
-	<p>Fonction qui renvoie un message en fonction de l’état d'authentification d’un utilisateur:</p>
-	<table>
-		{#each greeterIOs as greeterIO, index}
-			{@render greeterIOSnippet(greeterIO, index)}
-		{/each}
-	</table>
-	<p class="fragment explanation" data-fragment-index="1">
-		<code>&lbrace;welcome_message&rbrace;</code> = "welcome" si première
-		connection; "glad you are
-		back" sinon
-		<br />
-	</p>
-</Slide>
+
+	<Slide  >
+		<h3>Exemple concret: un <em>greeter</em></h3>
+		<p>Fonction qui renvoie un message en fonction de l’état d'authentification d’un utilisateur:</p>
+		<table>
+			<tbody>
+			<tr class="fragment" data-fragment-index="1" >
+				<td style="padding-bottom: 2em">Visiteur anonyme</td>
+				<td style="padding-bottom: 2em">⟹</td>
+				<td style="padding-bottom: 2em"><code style="color:var(--r-heading-color)">Welcome guest!</code></td>
+			</tr>
+			<tr class="fragment" data-fragment-index="2">
+				<td>Utilisateur</td>
+				<td>⟹</td>
+				<td><code style="color:var(--r-heading-color)">Hello &lbrace;username&rbrace;, &lbrace;welcome_message&rbrace;!</code></td>
+			</tr>
+			<tr class="fragment" data-fragment-index="2">
+				<td>Administrateur</td>
+				<td>⟹</td>
+				<td><code style="color:var(--r-heading-color)">Hi &lbrace;username&rbrace;, &lbrace;welcome_message&rbrace;!</code></td>
+			</tr>
+			<tr class="fragment" data-fragment-index="2">
+				<td style="padding-bottom: 2em">Root</td>
+				<td style="padding-bottom: 2em">⟹</td>
+				<td style="padding-bottom: 2em"><code style="color:var(--r-heading-color)">Greetings grand master, &lbrace;welcome_message&rbrace;!</code></td>
+			</tr>
+			<tr class="fragment" data-fragment-index="3">
+				<td>Erreur (code: 401)</td>
+				<td>⟹</td>
+				<td><code style="color:var(--r-heading-color)">Oops, couldn't log you in (reason: bad credentials).</code></td>
+			</tr>
+			<tr class="fragment" data-fragment-index="3">
+				<td>Erreur (code: 404)</td>
+				<td>⟹</td>
+				<td><code style="color:var(--r-heading-color)">Sorry, this account has been deleted or doesn't exist.</code></td>
+			</tr>
+			<tr class="fragment" data-fragment-index="3">
+				<td>Erreur (code: 5xx)</td>
+				<td>⟹</td>
+				<td><code style="color:var(--r-heading-color)">Impossible to connect to the authentication server.</code></td>
+			</tr>
+			<tr class="fragment" data-fragment-index="3">
+				<td>Erreur (code: autre)</td>
+				<td>⟹</td>
+				<td><code style="color:var(--r-heading-color)">An unknown error happened. (code: &lbrace;code&rbrace;).</code></td>
+			</tr>
+			</tbody>
+		</table>
+		<p class="explanation fragment" data-fragment-index="2">
+			<code>&lbrace;welcome_message&rbrace;</code> = "welcome" si première
+			connection; "glad you are
+			back" sinon
+		</p>
+	</Slide>
 
 <section>
 {#each { length : dataModelCodeChunks.length }, index}
@@ -498,13 +532,13 @@ function concatenateCodeChunks(chunks: string[], limit: number) : String{
 
 <section>
 {#each authenticatedLogicDefenseNoPatternCodeChunks as chunk, index}
-	{@render logicChunkSnippet(chunk, index, 'Distinction utilisateur authentifié (alt) – pattern matching ❌', index===authenticatedLogicDefenseNoPatternCodeChunks.length-1 ? 'Exhaustivité 😃 – Lisibilité 🫤' : undefined, '3em')}
+	{@render logicChunkSnippet(chunk, index, 'Distinction utilisateur authentifié (alt) – pattern matching ❌', index===authenticatedLogicDefenseNoPatternCodeChunks.length-1 ? 'Exhaustivité (à l\'exécution) 🙂 – Lisibilité 🫤' : undefined, '3em')}
 {/each}
 </section>
 
 <section>
 	{#each authenticatedLogicPatternCodeChunks as chunk, index}
-		{@render logicChunkSnippet(chunk, index, 'Cas utilisateur authentifié – pattern matching ✅', index===authenticatedLogicPatternCodeChunks.length-1 ? 'Exhaustivité 😃 – Lisibilité 😃' : undefined, '5em')}
+		{@render logicChunkSnippet(chunk, index, 'Cas utilisateur authentifié – pattern matching ✅', index===authenticatedLogicPatternCodeChunks.length-1 ? 'Exhaustivité (à la compilation) 😃 – Lisibilité 😃' : undefined, '5em')}
 	{/each}
 </section>
 
